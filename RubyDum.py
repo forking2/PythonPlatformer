@@ -91,7 +91,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    sc.blit(Player.image, Player.rect)
+    sc.blit(Player().image, Player().rect)
     pygame.display.flip()
     clock.tick(60)
 
