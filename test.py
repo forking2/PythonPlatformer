@@ -37,7 +37,7 @@ background = pygame.image.load('bg.jpg').convert_alpha()
 screen.blit(background, (0, 0))
 p = GameObject(player, 10, 3)
 objects = []
-for x in range(10):
+for x in range(0):
     o = GameObject(player, x*40, x)
     objects.append(o)
 while True:
