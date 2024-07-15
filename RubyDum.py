@@ -5,7 +5,7 @@ pygame.init()
 
 
 class Object(pygame.sprite.Sprite):
-    def __init__(self,x,y,file):
+    def __init__(self,x,y,file, rect, image):
         pygame.sprite.Sprite.__init__(self)
 
         self.image=pygame.image.load(file).convert_alpha()
@@ -15,27 +15,32 @@ width=1000
 height=500
 
 
-sc=pygame.display.set_mode((width,height))
-clock=pygame.time.Clock()
+sc = pygame.display.set_mode((width,height))
+clock = pygame.time.Clock()
 
-player=Object(100,400,'1.png')
+class player(Object):
+    def __init__(self, x=100, y=400, file='1.png'):
+        pygame.sprite.Sprite.__init__(self)
+        self.x = x
+        self.y = y
+        self.file = file
+
+        self.image = pygame.image.load(file).convert_alpha()
+        self.rect = self.image.get_rect(center=(x, y))
 
 
+running = True
 
-while True:
+while running:
     sc.fill(pygame.Color('white'))
 
 
     for event in pygame.event.get():
-        if event.type==pygame.QUIT:
+        if event.type == pygame.QUIT:
             exit()
 
+    clock.tick(60)
 
-sc.blit(player.image,player.rect)
-
-
-
-
-
+sc.blit(player.image, player.rect)
+pygame.display.flip()
 pygame.display.update()
-cloock.tickt(60)
