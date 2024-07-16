@@ -18,8 +18,7 @@ clock = pygame.time.Clock()
 
 isJump = False
 jumpcount = 10
-fall_speed = 5  # Швидкість падіння
-
+fall_speed = 5 
 display_width = 1200
 display_height = 800
 win = pygame.display.set_mode((display_width, display_height))
@@ -30,7 +29,6 @@ x = 50
 y = 650
 vel = 5  #
 
-# Платформы (пример координат)
 platforms = [
     (300, 600),
     (800, 500),
