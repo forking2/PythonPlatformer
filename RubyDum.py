@@ -31,6 +31,11 @@ pygame.display.set_caption("Ruby Dum")
 x = 50
 y = 650
 vel = 5
+dash_vel = 25
+isDash = False
+dash_time = 0.2
+dash_cooldown = 1
+last_dash = time.time() - dash_cooldown
 
 trees_positions = [
     (350, 500),
@@ -114,13 +119,28 @@ while running:
 
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_a] and x > vel:
+    # Виконання Dash
+    current_time = time.time()
+    if keys[pygame.K_LCTRL] and (current_time - last_dash) >= dash_cooldown:
+        isDash = True
+        dash_start_time = current_time
+        last_dash = current_time
+
+    if isDash and (current_time - dash_start_time) <= dash_time:
+        if last_direction == 'left' and x > dash_vel:
+            x -= dash_vel
+        elif last_direction == 'right' and x < display_width - dash_vel - idle[0].get_width():
+            x += dash_vel
+    else:
+        isDash = False
+
+    if keys[pygame.K_a] and x > vel and not isDash:
         x -= vel
         left = True
         right = False
         standcount = 0
         last_direction = 'left'
-    elif keys[pygame.K_d] and x < display_width - vel - idle[0].get_width():
+    elif keys[pygame.K_d] and x < display_width - vel - idle[0].get_width() and not isDash:
         x += vel
         right = True
         left = False
@@ -153,8 +173,6 @@ while running:
         y = new_y
     elif new_y is None and not isJump:
         y += fall_speed
-        jumpcount = 0
-
     if y > display_height:
         font = pygame.font.SysFont(None, 75)
         text = font.render('You Lost', True, (255, 0, 0))
