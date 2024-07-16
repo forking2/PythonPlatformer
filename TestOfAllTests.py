@@ -37,8 +37,13 @@ def player(x, y):
 
     if standcount + 1 >= 9:
         standcount = 0
-
-    if left:
+    if left and isJump == True:
+        win.blit(walkLeft[0], (x, y))
+        walkcount += 1
+    elif right and isJump == True:
+        win.blit(walkRight[0], (x, y))
+        walkcount += 1
+    elif left:
         win.blit(walkLeft[walkcount // 4], (x, y))
         walkcount += 1
         pygame.time.delay(30)
