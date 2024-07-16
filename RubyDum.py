@@ -67,6 +67,7 @@ pygame.init()
 
 width = 1000
 height = 500
+pygame.display.set_caption("Best Python Platformer")
 sc = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 

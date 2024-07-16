@@ -4,16 +4,16 @@ pygame.init()
 
 # background image
 walkRight = pygame.image.load('2.png')
-walkLeft = pygame.image.load('2.png')
+walkLeft = pygame.image.load('22.png')
 bg = pygame.image.load("bg.jpg")
-idle = [pygame.image.load('2.png'), pygame.image.load('3.png'), pygame.image.load('3.png')]
+idle = [pygame.image.load('2.png'), pygame.image.load('22.png'), pygame.image.load('3.png'), pygame.image.load('33.png')]
 standcount = True
 
 clock = pygame.time.Clock()
 
 # jump
 isJump = False
-jumpcount = 10
+jumpcount = 8
 
 # window
 display_width = 600
@@ -22,8 +22,8 @@ win = pygame.display.set_mode((display_width, display_height))
 
 # title & icon
 pygame.display.set_caption("Grand Theft Ewok")
-icon = pygame.image.load('1.png')
-pygame.display.set_icon(icon)
+#icon = pygame.image.load('1.png')
+#pygame.display.set_icon(icon)
 
 # player creds
 x = 50
@@ -38,7 +38,6 @@ def player(x, y):
     global standcount
     global walkcount
     win.blit(bg, (0, 0))
-    # win.blit(playerIMG, (x,y))
 
     if walkcount + 1 >= 9:
         walkcount = 0
@@ -55,14 +54,16 @@ def player(x, y):
     elif standcount:
         p = 0
         for frame in idle:
-            win.blit(idle[p], (x, y))
-            p += 1
-            if p >= 2:
-                p = 0
+            win.blit(idle[standcount], (x, y))
+
+            standcount += 1
+
+            # pygame.display.update()
+
+            if standcount >= 2:
+                standcount = 0
                 continue
-
-    pygame.display.update()
-
+            pygame.display.update()
 
 # game loop
 running = True
@@ -95,7 +96,7 @@ while running:
             right = False
 
     else:
-        if jumpcount >= -10:
+        if jumpcount >= -8:
             neg = 1
             if jumpcount < 0:
                 neg = -1
@@ -103,7 +104,7 @@ while running:
             jumpcount -= 1
         else:
             isJump = False
-            jumpcount = 10
+            jumpcount = 8
 
     player(x, y)
     pygame.display.update()
