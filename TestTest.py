@@ -1,112 +1,64 @@
-import pygame, time, itertools
-
+import pygame
+import sys
 pygame.init()
 
-# background image
-walkRight = pygame.image.load('2.png')
-walkLeft = pygame.image.load('22.png')
-bg = pygame.image.load("bg.jpg")
-idle = [pygame.image.load('2.png'), pygame.image.load('22.png'), pygame.image.load('3.png'), pygame.image.load('33.png')]
-standcount = True
+WIDTH = 600
+HEIGHT = 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+SPRITE_HEIGHT = 20
+SPRITE_WIDTH = 30
+class GameObject:
+    def __init__(self, image, height, speed):
+        self.speed = speed
+        self.image = image
+        self.pos = image.get_rect().move(0, height)
+
+    def move(self, up=False, down=False, left=False, right=False):
+        if right:
+            self.pos.right += self.speed
+        if left:
+            self.pos.right -= self.speed
+        if down:
+            self.pos.top += self.speed
+        if up:
+            self.pos.top -= self.speed
+        if self.pos.right > WIDTH:
+            self.pos.left = 0
+        if self.pos.top > HEIGHT - SPRITE_HEIGHT:
+            self.pos.top = 0
+        if self.pos.right < SPRITE_WIDTH:
+            self.pos.right = WIDTH
+        if self.pos.top < 0:
+            self.pos.top = HEIGHT - SPRITE_HEIGHT
 
 clock = pygame.time.Clock()
-
-# jump
-isJump = False
-jumpcount = 8
-
-# window
-display_width = 600
-display_height = 400
-win = pygame.display.set_mode((display_width, display_height))
-
-# title & icon
-pygame.display.set_caption("Grand Theft Ewok")
-#icon = pygame.image.load('1.png')
-#pygame.display.set_icon(icon)
-
-# player creds
-x = 50
-y = 280
-vel = .1
-
-# playerIMG
-playerIMG = pygame.image.load('1.png')
-
-
-def player(x, y):
-    global standcount
-    global walkcount
-    win.blit(bg, (0, 0))
-
-    if walkcount + 1 >= 9:
-        walkcount = 0
-
-    if standcount + 1 >= 9:
-        standcount = 0
-
-    if left:
-        win.blit(idle[walkcount // 3], (x, y))
-        walkcount += 1
-    elif right:
-        win.blit(idle[walkcount // 3], (x, y))
-        walkcount += 1
-    elif standcount:
-        p = 0
-        for frame in idle:
-            win.blit(idle[standcount], (x, y))
-
-            standcount += 1
-
-            # pygame.display.update()
-
-            if standcount >= 2:
-                standcount = 0
-                continue
-            pygame.display.update()
-
-# game loop
-running = True
-while running:
+player = pygame.image.load('1.png').convert_alpha()
+background = pygame.image.load('bg.jpg').convert_alpha()
+screen.blit(background, (0, 0))
+p = GameObject(player, 10, 3)
+objects = []
+for x in range(0):
+    o = GameObject(player, x*40, x)
+    objects.append(o)
+while True:
+    screen.blit(background, p.pos, p.pos)
+    for o in objects:
+        screen.blit(background, o.pos, o.pos)
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_UP]:
+        p.move(up=True)
+    if keys[pygame.K_DOWN]:
+        p.move(down=True)
+    if keys[pygame.K_LEFT]:
+        p.move(left=True)
+    if keys[pygame.K_RIGHT]:
+        p.move(right=True)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
-
-    # movement
-    keys = pygame.key.get_pressed()
-
-    if keys[pygame.K_a] and x > (vel - 25):
-        x -= vel
-        left = True
-        right = False
-    elif keys[pygame.K_d] and x < 520:
-        x += vel
-        right = True
-        left = False
-    else:
-        right = False
-        left = False
-        walkcount = 0
-        standcount = True
-
-    if not (isJump):
-        if keys[pygame.K_SPACE]:
-            isJump = True
-            left = False
-            right = False
-
-    else:
-        if jumpcount >= -8:
-            neg = 1
-            if jumpcount < 0:
-                neg = -1
-            y -= (jumpcount ** 2) * 0.5 * neg
-            jumpcount -= 1
-        else:
-            isJump = False
-            jumpcount = 8
-
-    player(x, y)
+            sys.exit()
+    screen.blit(p.image, p.pos)
+    for o in objects:
+        o.move()
+        screen.blit(o.image, o.pos)
     pygame.display.update()
-
-pygame.quit()
+    clock.tick(60)

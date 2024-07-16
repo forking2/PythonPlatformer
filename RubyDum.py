@@ -1,137 +1,111 @@
-# # import sys
-# import pygame
-# pygame.init()
-#
-#
-# # screen = pygame.display.set_mode((640, 480))
-# # sprite = pygame.image.load("1.png")
-# #
-# # screen.blit(sprite, (20, 20))
-# # pygame.quit()
-#
-#
-#
-# class Object(pygame.sprite.Sprite):
-#     def __init__(self,x,y,file, rect, image):
-#         pygame.sprite.Sprite.__init__(self)
-#
-#
-#
-#         self.image=pygame.image.load(file).convert_alpha()
-#         self.rect=self.image.get_rect(center=(x,y))
-#
-# width=1000
-# height=500
-#
-#
-# sc = pygame.display.set_mode((width,height))
-# clock = pygame.time.Clock()
-#
-# class player(Object):
-#     def __init__(self, x=100, y=400, file='1.png'):
-#         pygame.sprite.Sprite.__init__(self)
-#         self.x = x
-#         self.y = y
-#         self.file = file
-#
-#         self.image = pygame.image.load(file).convert_alpha()
-#         self.rect = self.image.get_rect(center=(x, y))
-#
-#
-# running = True
-#
-# while running:
-#     sc.fill(pygame.Color('white'))
-#
-#
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             exit()
-#
-#     clock.tick(60)
-#
-#
-# # screen.blit(sprite,(20,20))
-# sc.blit( player.rect,player.image)
-# pygame.display.flip()
-# pygame.display.update()
-
-
-
-
-
-
-
 import pygame
+
 pygame.init()
 
-width = 1000
-height = 500
-pygame.display.set_caption("Best Python Platformer")
-sc = pygame.display.set_mode((width, height))
+# Зображення для анімації
+walkRight = [pygame.image.load('2.png')]
+walkLeft = [pygame.image.load('22.png')]
+runRight = [pygame.image.load('3.png')]
+runLeft = [pygame.image.load('33.png')]
+bg = pygame.image.load("bg4.jpg")
+idle = [pygame.image.load('1.png'), pygame.image.load('11.png')]  # Додано нове зображення
+
+# Ініціалізація змінних
+standcount = 0
+walkcount = 0
+left = False
+right = False
+last_direction = None  # Додано для збереження останнього напрямку руху
+
 clock = pygame.time.Clock()
 
-class Object(pygame.sprite.Sprite):
-    def __init__(self, x, y, file, rect, image):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(file).convert_alpha()
-        self.rect = self.image.get_rect(center=(x, y))
+# Параметри стрибка
+isJump = False
+jumpcount = 10
 
+# Вікно гри
+display_width = 1200
+display_height = 800
+win = pygame.display.set_mode((display_width, display_height))
 
+# Назва гри
+pygame.display.set_caption("Grand Theft Ewok")
 
+# Координати та швидкість гравця
+x = 50
+y = 650
+vel = 5  # збільшено для помітнішого руху
 
-class Thees(Object):
-    def __init__(self,x=400,y=375,file='Threes3.png'):
-        pygame.sprite.Sprite.__init__(self)
-        self.x=x
-        self.y=y
-        self.file=file
-        self.image=pygame.image.load(file).convert_alpha()
-        self.rect=self.image.get_rect(center=(x,y))
+def player(x, y):
+    global standcount
+    global walkcount
+    win.blit(bg, (0, 0))
 
+    if walkcount + 1 >= 9:
+        walkcount = 0
 
+    if standcount + 1 >= 9:
+        standcount = 0
 
+    if left:
+        win.blit(walkLeft[0], (x, y))  # Використовуємо індекс 0, оскільки тільки один елемент у списку
+        walkcount += 1
+    elif right:
+        win.blit(walkRight[0], (x, y))  # Використовуємо індекс 0, оскільки тільки один елемент у списку
+        walkcount += 1
+    else:
+        if last_direction == 'left':
+            win.blit(idle[1], (x, y))  # Зображення після руху вліво
+        else:
+            win.blit(idle[0], (x, y))  # Зображення після руху вправо
+        standcount += 1
 
+    pygame.display.update()
 
-class Player(Object):
-    def __init__(self, x=100, y=400, file='1.png'):
-        pygame.sprite.Sprite.__init__(self)
-        self.x = x
-        self.y = y
-        self.file = file
-        self.image = pygame.image.load(file).convert_alpha()
-        self.rect = self.image.get_rect(center=(x, y))
-
+# Основний цикл гри
 running = True
 while running:
-    sc.fill(pygame.Color('white'))
+    clock.tick(30)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    sc.blit(Thees().image,Thees().rect)
-    sc.blit(Player().image, Player().rect)
-    pygame.display.flip()
-    clock.tick(60)
+
+    # Рух
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_a] and x > vel:
+        x -= vel
+        left = True
+        right = False
+        standcount = 0
+        last_direction = 'left'
+    elif keys[pygame.K_d] and x < display_width - vel - idle[0].get_width():
+        x += vel
+        right = True
+        left = False
+        standcount = 0
+        last_direction = 'right'
+    else:
+        right = False
+        left = False
+        walkcount = 0
+
+    if not isJump:
+        if keys[pygame.K_SPACE]:
+            isJump = True
+            left = False
+            right = False
+    else:
+        if jumpcount >= -10:
+            neg = 1
+            if jumpcount < 0:
+                neg = -1
+            y -= (jumpcount ** 2) * 0.5 * neg
+            jumpcount -= 1
+        else:
+            isJump = False
+            jumpcount = 10
+
+    player(x, y)
 
 pygame.quit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

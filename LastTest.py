@@ -2,55 +2,58 @@ import pygame
 
 pygame.init()
 
-walkRight = [pygame.image.load('2.png'), pygame.image.load('3.png')]
-walkLeft = [pygame.image.load('22.png'), pygame.image.load('33.png')]
-bg = pygame.image.load("bg4.jpg")
-idle = [pygame.image.load('1.png'), pygame.image.load('11.png')]
+# Зображення для анімації
+walkRight = [pygame.image.load('2.png')]  # Якщо у вас більше зображень, додайте їх сюди
+walkLeft = [pygame.image.load('22.png')]
+runRight = [pygame.image.load('3.png')]
+runLeft = [pygame.image.load('33.png')]
+bg = pygame.image.load("Bg4.jpg")
+idle = [pygame.image.load('1.png')]  # список idle має один елемент
 
+# Ініціалізація змінних
 standcount = 0
 walkcount = 0
 left = False
 right = False
-last_direction = None
 
 clock = pygame.time.Clock()
 
+# Параметри стрибка
 isJump = False
 jumpcount = 10
 
+# Вікно гри
 display_width = 1200
 display_height = 800
 win = pygame.display.set_mode((display_width, display_height))
 
+# Назва гри
 pygame.display.set_caption("Grand Theft Ewok")
 
-x = 50
+# Координати та швидкість гравця
+x = 220
 y = 650
-vel = 5  #
+vel = 8  # збільшено для помітнішого руху
+
 def player(x, y):
     global standcount
     global walkcount
     win.blit(bg, (0, 0))
 
-    if walkcount + 1 >= 8:
+    if walkcount + 1 >= 9:
         walkcount = 0
 
     if standcount + 1 >= 9:
         standcount = 0
 
     if left:
-        win.blit(walkLeft[walkcount // 4], (x, y))
+        win.blit(walkLeft[0], (x, y))  # Використовуємо індекс 0, оскільки тільки один елемент у списку
         walkcount += 1
-        pygame.time.delay(30)
     elif right:
-        win.blit(walkRight[walkcount // 4], (x, y))
+        win.blit(walkRight[0], (x, y))  # Використовуємо індекс 0, оскільки тільки один елемент у списку
         walkcount += 1
-        pygame.time.delay(30)
     else:
-        if last_direction == 'left':
-            win.blit(idle[1], (x, y))
-        else:
-            win.blit(idle[0], (x, y))
+        win.blit(idle[0], (x, y))  # Виправлено індексацію
         standcount += 1
 
     pygame.display.update()
@@ -71,13 +74,11 @@ while running:
         left = True
         right = False
         standcount = 0
-        last_direction = 'left'
     elif keys[pygame.K_d] and x < display_width - vel - idle[0].get_width():
         x += vel
         right = True
         left = False
         standcount = 0
-        last_direction = 'right'
     else:
         right = False
         left = False
