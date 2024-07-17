@@ -9,6 +9,10 @@ bg = pygame.image.load("bg4.jpg")
 idle = [pygame.image.load('1.png'), pygame.image.load('11.png')]
 platform = pygame.image.load('Platform2.png')
 Threes = [pygame.image.load('TheersCadr1.png'), pygame.image.load('ThreeCadr2.png')]
+pygame.mixer.music.load('JumpEfect.mp3')
+pygame.mixer.music.load('GamePlayMusik.mp3')
+pygame.mixer.music.play(loops=-1,start=0.0,fade_ms=32000)
+
 
 standcount = 0
 walkcount = 0
@@ -31,16 +35,21 @@ pygame.display.set_caption("Ruby Dum")
 x = 50
 y = 650
 vel = 5
+dash_vel = 25
+isDash = False
+dash_time = 0.2
+dash_cooldown = 1
+last_dash = time.time() - dash_cooldown
 
 trees_positions = [
-    (150, 500),
+    (350, 500),
     (950, 500)
 ]
 
 platforms = [
-    (760, 600),
+    (250, 600),
     (50, 660),
-    (683, 400)
+    (600, 500)
 ]
 
 tree_frame = 0
@@ -75,9 +84,15 @@ def player(x, y):
     if left and isJump:
         win.blit(walkLeft[0], (x, y))
         walkcount += 1
+        pygame.mixer.music.play(0)
+
+
+
     elif right and isJump:
         win.blit(walkRight[0], (x, y))
+
         walkcount += 1
+        pygame.mixer.music.play(0)
     elif left:
         win.blit(walkLeft[walkcount // 4], (x, y))
         walkcount += 1
@@ -90,6 +105,30 @@ def player(x, y):
         else:
             win.blit(idle[0], (x, y))
         standcount += 1
+
+
+
+    if isJump==True:
+        pygame.mixer.music.play(0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     pygame.display.update()
 
@@ -114,13 +153,28 @@ while running:
 
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_a] and x > vel:
+    # Виконання Dash
+    current_time = time.time()
+    if keys[pygame.K_LCTRL] and (current_time - last_dash) >= dash_cooldown:
+        isDash = True
+        dash_start_time = current_time
+        last_dash = current_time
+
+    if isDash and (current_time - dash_start_time) <= dash_time:
+        if last_direction == 'left' and x > dash_vel:
+            x -= dash_vel
+        elif last_direction == 'right' and x < display_width - dash_vel - idle[0].get_width():
+            x += dash_vel
+    else:
+        isDash = False
+
+    if keys[pygame.K_a] and x > vel and not isDash:
         x -= vel
         left = True
         right = False
         standcount = 0
         last_direction = 'left'
-    elif keys[pygame.K_d] and x < display_width - vel - idle[0].get_width():
+    elif keys[pygame.K_d] and x < display_width - vel - idle[0].get_width() and not isDash:
         x += vel
         right = True
         left = False
@@ -153,8 +207,6 @@ while running:
         y = new_y
     elif new_y is None and not isJump:
         y += fall_speed
-        jumpcount = 0
-
     if y > display_height:
         font = pygame.font.SysFont(None, 75)
         text = font.render('You Lost', True, (255, 0, 0))
