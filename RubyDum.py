@@ -2,7 +2,7 @@ import pygame
 import time
 
 pygame.init()
-
+#RuKIFomZhopa
 walkRight = [pygame.image.load('2.png'), pygame.image.load('3.png')]
 walkLeft = [pygame.image.load('22.png'), pygame.image.load('33.png')]
 bg = pygame.image.load("bg4.jpg")
