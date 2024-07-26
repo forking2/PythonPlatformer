@@ -12,6 +12,10 @@ Threes = [pygame.image.load('TheersCadr1.png'), pygame.image.load('ThreeCadr2.pn
 Door = pygame.image.load('Door.jpg')
 DownPlatform = pygame.image.load('Downplatform.png')
 
+GameMusic = pygame.mixer.music.load('GamePlayMusik.mp3')
+pygame.mixer.music.play(loops=-1, start=0.0)
+jump_sound = pygame.mixer.Sound('JumpEfect.mp3')
+pygame.mixer.music.set_volume(0.2)
 standcount = 0
 walkcount = 0
 left = False
@@ -46,11 +50,11 @@ tree_animation_delay = 0.3
 current_level = 1
 
 def init_level_1():
-    global platforms, doors, trees_positions,downplatform, x, y
+    global platforms, doors, trees_positions, downplatform, x, y
     platforms = [
-        (250, 810),
-        (420, 700),
-        (560, 580)
+        (250, 900),
+        (500, 780),
+        (640, 660)
     ]
     doors = [
         (800, 400)
@@ -59,26 +63,20 @@ def init_level_1():
         (350, 720),
         (950, 720)
     ]
-   # downplatform = [
-    #    (200, 680)
-    #]
     x, y = 250, 800
 
 def init_level_2():
     global platforms, doors, trees_positions, downplatform, x, y
     platforms = [
-        (250, 810),
-        (50, 660),
+        (250, 940),
+        (350, 860),
         (600, 500),
         (450, 360),
         (650, 278),
         (950, 278)
     ]
-    #downplatform = [
-     #   (250, 700)
-   # ]
     doors = [
-        (950,300)
+        (950, 300)
     ]
     trees_positions = [
         (550, 720),
@@ -93,9 +91,6 @@ def player(x, y):
     global tree_last_update
 
     win.blit(bg, (0, 0))
-    #for downplatfrom_pos in downplatform:
-     #   win.blit(DownPlatform, downplatfrom_pos)
-
     for platform_pos in platforms:
         win.blit(platform, platform_pos)
 
@@ -144,9 +139,12 @@ def check_platform_collision(x, y):
         platform_rect = pygame.Rect(platform_pos[0], platform_pos[1], platform.get_width(), platform.get_height())
 
         if player_rect.colliderect(platform_rect):
+
             return platform_pos[1] - idle[0].get_height()
 
     return None
+
+
 
 def check_door_collision(x, y):
     player_rect = pygame.Rect(x, y, idle[0].get_width(), idle[0].get_height())
@@ -172,7 +170,6 @@ while running:
 
     keys = pygame.key.get_pressed()
 
-    # Виконання Dash
     current_time = time.time()
     if keys[pygame.K_LCTRL] and (current_time - last_dash) >= dash_cooldown:
         isDash = True
@@ -209,6 +206,7 @@ while running:
             isJump = True
             left = False
             right = False
+            jump_sound.play()
     else:
         if jumpcount >= -10:
             neg = 1
