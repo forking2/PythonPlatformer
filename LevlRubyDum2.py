@@ -11,7 +11,7 @@ bg = pygame.image.load("bg4.jpg")
 idle = [pygame.image.load('1.png'), pygame.image.load('11.png')]
 platform = pygame.image.load('Platform2.png')
 Threes = [pygame.image.load('TheersCadr1.png'), pygame.image.load('ThreeCadr2.png')]
-Door=pygame.image.load('Door.png')
+Door=pygame.image.load('Door.jpg')
 
 # pygame.mixer.music.load('JumpEfect.mp3')
 pygame.mixer.music.load('GamePlayMusik.mp3')
@@ -125,32 +125,6 @@ def player(x, y):
         else:
             win.blit(idle[0], (x, y))
         standcount += 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

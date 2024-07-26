@@ -2,13 +2,15 @@ import pygame
 import time
 
 pygame.init()
-#RuKIFomZhopa
+
 walkRight = [pygame.image.load('2.png'), pygame.image.load('3.png')]
 walkLeft = [pygame.image.load('22.png'), pygame.image.load('33.png')]
-bg = pygame.image.load("bg4.jpg")
+bg = pygame.image.load("FinalBg.png")
 idle = [pygame.image.load('1.png'), pygame.image.load('11.png')]
 platform = pygame.image.load('Platform2.png')
 Threes = [pygame.image.load('TheersCadr1.png'), pygame.image.load('ThreeCadr2.png')]
+Door = pygame.image.load('Door.jpg')
+DownPlatform = pygame.image.load('Downplatform.png')
 
 standcount = 0
 walkcount = 0
@@ -22,14 +24,14 @@ isJump = False
 jumpcount = 10
 fall_speed = 7
 
-display_width = 1200
-display_height = 800
+display_width = 1920
+display_height = 1080
 win = pygame.display.set_mode((display_width, display_height))
 
 pygame.display.set_caption("Ruby Dum")
 
-x = 50
-y = 650
+x = 250
+y = 800
 vel = 5
 dash_vel = 25
 isDash = False
@@ -37,20 +39,52 @@ dash_time = 0.2
 dash_cooldown = 1
 last_dash = time.time() - dash_cooldown
 
-trees_positions = [
-    (350, 500),
-    (950, 500)
-]
-
-platforms = [
-    (250, 600),
-    (50, 660),
-    (600, 500)
-]
-
 tree_frame = 0
 tree_last_update = time.time()
 tree_animation_delay = 0.3
+
+current_level = 1
+
+def init_level_1():
+    global platforms, doors, trees_positions,downplatform, x, y
+    platforms = [
+        (250, 810),
+        (420, 700),
+        (560, 580)
+    ]
+    doors = [
+        (800, 400)
+    ]
+    trees_positions = [
+        (350, 720),
+        (950, 720)
+    ]
+   # downplatform = [
+    #    (200, 680)
+    #]
+    x, y = 250, 800
+
+def init_level_2():
+    global platforms, doors, trees_positions, downplatform, x, y
+    platforms = [
+        (250, 810),
+        (50, 660),
+        (600, 500),
+        (450, 360),
+        (650, 278),
+        (950, 278)
+    ]
+    #downplatform = [
+     #   (250, 700)
+   # ]
+    doors = [
+        (950,300)
+    ]
+    trees_positions = [
+        (550, 720),
+        (1050, 720)
+    ]
+    x, y = 250, 800
 
 def player(x, y):
     global standcount
@@ -59,9 +93,14 @@ def player(x, y):
     global tree_last_update
 
     win.blit(bg, (0, 0))
+    #for downplatfrom_pos in downplatform:
+     #   win.blit(DownPlatform, downplatfrom_pos)
 
     for platform_pos in platforms:
         win.blit(platform, platform_pos)
+
+    for door_pos in doors:
+        win.blit(Door, door_pos)
 
     current_time = time.time()
     if current_time - tree_last_update >= tree_animation_delay:
@@ -109,7 +148,21 @@ def check_platform_collision(x, y):
 
     return None
 
+def check_door_collision(x, y):
+    player_rect = pygame.Rect(x, y, idle[0].get_width(), idle[0].get_height())
+
+    for door_pos in doors:
+        door_rect = pygame.Rect(door_pos[0], door_pos[1], Door.get_width(), Door.get_height())
+
+        if player_rect.colliderect(door_rect):
+            return True
+
+    return False
+
+init_level_1()
+
 running = True
+
 while running:
 
     clock.tick(30)
@@ -180,6 +233,19 @@ while running:
         pygame.display.update()
         pygame.time.delay(1000)
         running = False
+
+    if check_door_collision(x, y):
+        if current_level == 1:
+            pygame.time.delay(500)
+            init_level_2()
+            current_level = 2
+        elif current_level == 2:
+            font = pygame.font.SysFont(None, 75)
+            text = font.render('You Win!', True, (0, 255, 0))
+            win.blit(text, (display_width // 2 - text.get_width() // 2, display_height // 2 - text.get_height() // 2))
+            pygame.display.update()
+            pygame.time.delay(1000)
+            running = False
 
     player(x, y)
 
