@@ -46,9 +46,24 @@ last_dash = time.time() - dash_cooldown
 tree_frame = 0
 tree_last_update = time.time()
 tree_animation_delay = 0.3
+current_level = 0
 
-current_level = 1
-
+def init_level_0():
+    global platforms, doors, trees_positions, downplatform, x, y
+    platforms = [
+        (240, 900),
+        (450, 900),
+        (740, 900)
+    ]
+    doors = [
+        (900, 750)
+    ]
+    trees_positions = [
+        (350, 840),
+        (950, 840)
+    ]
+    x, y = 250, 800
+    place_player_on_platform()
 def init_level_1():
     global platforms, doors, trees_positions, downplatform, x, y
     platforms = [
@@ -73,8 +88,8 @@ def init_level_2():
         (250, 940),
         (200, 940),
         (350, 860),
-        (550,650),
-        (450,750),
+        (550, 650),
+        (450, 750),
         (500, 500),
         (450, 360),
         (650, 278),
@@ -96,8 +111,8 @@ def init_level_3():
         (150, 940),
         (100, 940),
         (250, 860),
-        (550,750),
-        (99,650),
+        (550, 750),
+        (99, 650),
         (500, 500),
         (450, 360)
     ]
@@ -187,7 +202,7 @@ def place_player_on_platform():
     if new_y is not None:
         y = new_y
 
-init_level_1()
+init_level_0()
 
 running = True
 
@@ -196,6 +211,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    if current_level == 0:
+        font = pygame.font.SysFont(None, 50)
+        text = font.render('To Move Press WASD, To Jump Press Space, To Dash Press Left Control', True, (255, 10, 90))
+        win.blit(text, (display_width // 2 - text.get_width() // 2, display_height // 1.5 - text.get_height() // 1.5))
+        pygame.display.update()
 
     keys = pygame.key.get_pressed()
 
@@ -263,6 +283,10 @@ while running:
         running = False
 
     if check_door_collision(x, y):
+        if current_level == 0:
+            pygame.time.delay(500)
+            init_level_1()
+            current_level = 1
         if current_level == 1:
             pygame.time.delay(500)
             init_level_2()
