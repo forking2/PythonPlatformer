@@ -2,7 +2,7 @@ import pygame
 import time
 
 pygame.init()
-#Dalbaeb
+
 walkRight = [pygame.image.load('2.png'), pygame.image.load('3.png')]
 walkLeft = [pygame.image.load('22.png'), pygame.image.load('33.png')]
 bg = pygame.image.load("FinalBg.png")
@@ -10,7 +10,6 @@ idle = [pygame.image.load('1.png'), pygame.image.load('11.png')]
 platform = pygame.image.load('Platform2.png')
 Threes = [pygame.image.load('TheersCadr1.png'), pygame.image.load('ThreeCadr2.png')]
 Door = pygame.image.load('Door.jpg')
-# Door2=pygame.image.load('Door1.png')
 DownPlatform = pygame.image.load('Downplatform.png')
 
 GameMusic = pygame.mixer.music.load('GamePlayMusik.mp3')
@@ -27,7 +26,7 @@ clock = pygame.time.Clock()
 
 isJump = False
 jumpcount = 10
-fall_speed = 7
+fall_speed = 15
 
 display_width = 1920
 display_height = 1080
@@ -53,7 +52,8 @@ current_level = 1
 def init_level_1():
     global platforms, doors, trees_positions, downplatform, x, y
     platforms = [
-        (250, 900),
+        (200, 900),
+        (240, 900),
         (500, 780),
         (640, 660)
     ]
@@ -65,11 +65,13 @@ def init_level_1():
         (950, 720)
     ]
     x, y = 250, 800
+    place_player_on_platform()
 
 def init_level_2():
     global platforms, doors, trees_positions, downplatform, x, y
     platforms = [
         (250, 940),
+        (200, 940),
         (350, 860),
         (550,650),
         (450,750),
@@ -78,13 +80,6 @@ def init_level_2():
         (650, 278),
         (950, 278)
     ]
-
-
-
-
-
-
-
     doors = [
         (950, 300)
     ]
@@ -93,28 +88,19 @@ def init_level_2():
         (1050, 720)
     ]
     x, y = 250, 800
-
-
+    place_player_on_platform()
 
 def init_level_3():
     global platforms, doors, trees_positions, downplatform, x, y
     platforms = [
         (150, 940),
+        (100, 940),
         (250, 860),
         (550,750),
         (99,650),
         (500, 500),
-        (450, 360),
-        # (650, 278),
-        # (950, 278)
+        (450, 360)
     ]
-
-
-
-
-
-
-
     doors = [
         (87, 100)
     ]
@@ -122,11 +108,8 @@ def init_level_3():
         (550, 720),
         (1050, 720)
     ]
-    x, y = 250, 800
-
-
-
-
+    x, y = 150, 800
+    place_player_on_platform()
 
 def player(x, y):
     global standcount
@@ -140,9 +123,6 @@ def player(x, y):
 
     for door_pos in doors:
         win.blit(Door, door_pos)
-
-    # for door2_pos in doors2:
-    #     win.blit(Door2,door2_pos)
 
     current_time = time.time()
     if current_time - tree_last_update >= tree_animation_delay:
@@ -186,12 +166,9 @@ def check_platform_collision(x, y):
         platform_rect = pygame.Rect(platform_pos[0], platform_pos[1], platform.get_width(), platform.get_height())
 
         if player_rect.colliderect(platform_rect):
-
             return platform_pos[1] - idle[0].get_height()
 
     return None
-
-
 
 def check_door_collision(x, y):
     player_rect = pygame.Rect(x, y, idle[0].get_width(), idle[0].get_height())
@@ -204,14 +181,17 @@ def check_door_collision(x, y):
 
     return False
 
+def place_player_on_platform():
+    global y
+    new_y = check_platform_collision(x, y)
+    if new_y is not None:
+        y = new_y
+
 init_level_1()
 
 running = True
 
-
-
 while running:
-
     clock.tick(30)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -273,6 +253,7 @@ while running:
         y = new_y
     elif new_y is None and not isJump:
         y += fall_speed
+
     if y > display_height:
         font = pygame.font.SysFont(None, 75)
         text = font.render('You Lost', True, (255, 0, 0))
@@ -290,16 +271,16 @@ while running:
             pygame.time.delay(500)
             init_level_3()
             current_level = 3
+            place_player_on_platform()
 
     if check_door_collision(x, y):
         if current_level == 3:
             font = pygame.font.SysFont(None, 75)
-            text = font.render('comming soon', True, (255,0,0))
+            text = font.render('Coming soon', True, (255,0,0))
             win.blit(text, (display_width // 2 - text.get_width() // 2, display_height // 2 - text.get_height() // 2))
             pygame.display.update()
             pygame.time.delay(1000)
             running = False
-
 
     player(x, y)
 
