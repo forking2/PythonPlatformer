@@ -10,6 +10,7 @@ idle = [pygame.image.load('1.png'), pygame.image.load('11.png')]
 platform = pygame.image.load('Platform2.png')
 Threes = [pygame.image.load('TheersCadr1.png'), pygame.image.load('ThreeCadr2.png')]
 Door = pygame.image.load('Door.jpg')
+# Door2=pygame.image.load('Door1.png')
 DownPlatform = pygame.image.load('Downplatform.png')
 
 GameMusic = pygame.mixer.music.load('GamePlayMusik.mp3')
@@ -70,11 +71,20 @@ def init_level_2():
     platforms = [
         (250, 940),
         (350, 860),
-        (600, 500),
+        (550,650),
+        (450,750),
+        (500, 500),
         (450, 360),
         (650, 278),
         (950, 278)
     ]
+
+
+
+
+
+
+
     doors = [
         (950, 300)
     ]
@@ -83,6 +93,40 @@ def init_level_2():
         (1050, 720)
     ]
     x, y = 250, 800
+
+
+
+def init_level_3():
+    global platforms, doors, trees_positions, downplatform, x, y
+    platforms = [
+        (150, 940),
+        (250, 860),
+        (550,750),
+        (99,650),
+        (500, 500),
+        (450, 360),
+        # (650, 278),
+        # (950, 278)
+    ]
+
+
+
+
+
+
+
+    doors = [
+        (87, 100)
+    ]
+    trees_positions = [
+        (550, 720),
+        (1050, 720)
+    ]
+    x, y = 250, 800
+
+
+
+
 
 def player(x, y):
     global standcount
@@ -96,6 +140,9 @@ def player(x, y):
 
     for door_pos in doors:
         win.blit(Door, door_pos)
+
+    # for door2_pos in doors2:
+    #     win.blit(Door2,door2_pos)
 
     current_time = time.time()
     if current_time - tree_last_update >= tree_animation_delay:
@@ -160,6 +207,8 @@ def check_door_collision(x, y):
 init_level_1()
 
 running = True
+
+
 
 while running:
 
@@ -238,12 +287,19 @@ while running:
             init_level_2()
             current_level = 2
         elif current_level == 2:
+            pygame.time.delay(500)
+            init_level_3()
+            current_level = 3
+
+    if check_door_collision(x, y):
+        if current_level == 3:
             font = pygame.font.SysFont(None, 75)
-            text = font.render('You Win!', True, (0, 255, 0))
+            text = font.render('comming soon', True, (255,0,0))
             win.blit(text, (display_width // 2 - text.get_width() // 2, display_height // 2 - text.get_height() // 2))
             pygame.display.update()
             pygame.time.delay(1000)
             running = False
+
 
     player(x, y)
 
