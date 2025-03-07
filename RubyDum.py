@@ -1,6 +1,5 @@
 import pygame
 import time
-
 pygame.init()
 walkRight = [pygame.image.load('2.png'), pygame.image.load('3.png')]
 walkLeft = [pygame.image.load('22.png'), pygame.image.load('33.png')]
@@ -11,7 +10,6 @@ Threes = [pygame.image.load('TheersCadr1.png'), pygame.image.load('ThreeCadr2.pn
 Door = pygame.image.load('Door.jpg')
 # Door2=pygame.image.load('Door1.png')
 DownPlatform = pygame.image.load('Downplatform.png')
-
 GameMusic = pygame.mixer.music.load('GamePlayMusik.mp3')
 pygame.mixer.music.play(loops=-1, start=0.0)
 jump_sound = pygame.mixer.Sound('JumpEfect.mp3')
@@ -28,10 +26,11 @@ isJump = False
 jumpcount = 10
 fall_speed = 7
 
-display_info = pygame.display.Info()
-display_width = display_info.current_w
-display_height = display_info.current_h
-win = pygame.display.set_mode((display_width, display_height))
+
+infoObject = pygame.display.Info()
+display_width = infoObject.current_w
+display_height = infoObject.current_h
+win = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN)
 
 pygame.display.set_caption("Ruby Dum")
 
@@ -78,13 +77,6 @@ def init_level_2():
         (650, 278),
         (950, 278)
     ]
-
-
-
-
-
-
-
     doors = [
         (950, 300)
     ]
@@ -93,9 +85,6 @@ def init_level_2():
         (1050, 720)
     ]
     x, y = 250, 800
-
-
-
 def init_level_3():
     global platforms, doors, trees_positions, downplatform, x, y
     platforms = [
@@ -108,13 +97,6 @@ def init_level_3():
         # (650, 278),
         # (950, 278)
     ]
-
-
-
-
-
-
-
     doors = [
         (87, 100)
     ]
@@ -123,10 +105,6 @@ def init_level_3():
         (1050, 720)
     ]
     x, y = 250, 800
-
-
-
-
 #я
 def player(x, y):
     global standcount
@@ -140,9 +118,6 @@ def player(x, y):
 
     for door_pos in doors:
         win.blit(Door, door_pos)
-
-    # for door2_pos in doors2:
-    #     win.blit(Door2,door2_pos)
 
     current_time = time.time()
     if current_time - tree_last_update >= tree_animation_delay:
@@ -211,7 +186,7 @@ running = True
 
 #я
 while running:
-
+    new_y = check_platform_collision(x, y + vel)
     clock.tick(30)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -267,7 +242,7 @@ while running:
             isJump = False
             jumpcount = 10
 
-    new_y = check_platform_collision(x, y + vel)
+
 
     if new_y is not None and not isJump:
         y = new_y
@@ -297,10 +272,7 @@ while running:
             text = font.render('comming soon', True, (255,0,0))
             win.blit(text, (display_width // 2 - text.get_width() // 2, display_height // 2 - text.get_height() // 2))
             pygame.display.update()
-            pygame.time.delay(1000)
+            pygame.time.delay(1500)
             running = False
-
-
     player(x, y)
-
 pygame.quit()
